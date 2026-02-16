@@ -13,6 +13,9 @@ export const HomePage: React.FC = () => {
     const location = useLocation();
     const [showThemeModal, setShowThemeModal] = useState(false);
 
+    // 生成一个持久的 Key，当核心数据变化时强制组件重排/重挂载，修复交互失效问题
+    const renderKey = `${userName}-${friendName}-${relationship}-${currentTheme}`;
+
     // 从 URL 中恢复信息
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -20,16 +23,17 @@ export const HomePage: React.FC = () => {
         const f = params.get('f');
         const r = params.get('r');
 
-        if (u) setUserName(u);
-        if (f) setFriendName(f);
-        if (r) setRelationship(r as any);
-    }, [location.search, setUserName, setFriendName, setRelationship]);
+        if (u && u !== userName) setUserName(u);
+        if (f && f !== friendName) setFriendName(f);
+        if (r && r !== relationship) setRelationship(r as any);
+    }, [location.search, setUserName, setFriendName, setRelationship, userName, friendName, relationship]);
 
     const getRelationshipBadge = () => {
         switch (relationship) {
             case 'lover':
                 return (
                     <motion.div
+                        key="lover-badge"
                         initial={{ scale: 0 }} animate={{ scale: 1 }}
                         className="mt-4 px-4 py-1 rounded-full bg-pink-100 text-pink-600 font-bold border border-pink-200 inline-flex items-center gap-2"
                     >
@@ -39,6 +43,7 @@ export const HomePage: React.FC = () => {
             case 'family':
                 return (
                     <motion.div
+                        key="family-badge"
                         initial={{ scale: 0 }} animate={{ scale: 1 }}
                         className="mt-4 px-4 py-1 rounded-full bg-orange-100 text-orange-600 font-bold border border-orange-200 inline-flex items-center gap-2"
                     >
@@ -49,6 +54,7 @@ export const HomePage: React.FC = () => {
             default:
                 return (
                     <motion.div
+                        key="friend-badge"
                         initial={{ scale: 0 }} animate={{ scale: 1 }}
                         className="mt-4 px-4 py-1 rounded-full bg-emerald-100 text-teal-700 font-bold border border-emerald-200 inline-flex items-center gap-2"
                     >
@@ -59,8 +65,9 @@ export const HomePage: React.FC = () => {
     };
 
     return (
-        <div className={`min-h-screen p-6 flex flex-col items-center pt-12 ${theme.colors.background} transition-colors duration-500`}>
+        <div key={renderKey} className={`min-h-screen p-6 flex flex-col items-center pt-12 ${theme.colors.background} transition-colors duration-500`}>
             <motion.header
+                key={`${userName}-${friendName}`}
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 className="text-center mb-12"
@@ -77,6 +84,7 @@ export const HomePage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
                 <Card
+                    key={`game-${currentTheme}`}
                     title="互动小游戏"
                     icon={<Gamepad2 size={48} />}
                     onClick={() => navigate('/games')}
@@ -86,6 +94,7 @@ export const HomePage: React.FC = () => {
                 </Card>
 
                 <Card
+                    key={`blessing-${currentTheme}`}
                     title="新年祝福匣"
                     icon={<Gift size={48} />}
                     onClick={() => navigate('/blessing')}
@@ -95,6 +104,7 @@ export const HomePage: React.FC = () => {
                 </Card>
 
                 <Card
+                    key={`settings-${currentTheme}`}
                     title="更换主题"
                     icon={<Settings size={48} />}
                     onClick={() => setShowThemeModal(true)}
