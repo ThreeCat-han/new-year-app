@@ -22,17 +22,39 @@ interface AppContextType extends AppState {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [state, setState] = useState<AppState>({
-        userName: '',
-        friendName: '',
-        relationship: 'friend',
-        currentTheme: 'warm',
-        scores: {
+const getInitialState = (): AppState => {
+    // 1. 尝试从 URL Hash 获取 (优先级最高，用于分享链接)
+    const hash = window.location.hash;
+    const queryString = hash.includes('?') ? hash.split('?')[1] : '';
+    const params = new URLSearchParams(queryString);
+
+    const u = params.get('u');
+    const f = params.get('f');
+    const r = params.get('r');
+
+    // 2. 尝试从 LocalStorage 获取
+    const persisted = localStorage.getItem('happy_new_year_app_state');
+    const savedState = persisted ? JSON.parse(persisted) : null;
+
+    return {
+        userName: u || savedState?.userName || '',
+        friendName: f || savedState?.friendName || '',
+        relationship: (r as any) || savedState?.relationship || 'friend',
+        currentTheme: savedState?.currentTheme || 'warm',
+        scores: savedState?.scores || {
             catchLuck: 0,
             puzzleCompleted: false,
         },
-    });
+    };
+};
+
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [state, setState] = useState<AppState>(getInitialState());
+
+    // 每次状态改变时持久化到 LocalStorage
+    React.useEffect(() => {
+        localStorage.setItem('happy_new_year_app_state', JSON.stringify(state));
+    }, [state]);
 
     const setUserName = (name: string) => setState(prev => ({ ...prev, userName: name }));
     const setFriendName = (name: string) => setState(prev => ({ ...prev, friendName: name }));

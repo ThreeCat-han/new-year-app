@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { themes, type ThemeKey } from '../theme/themeConfig';
 import { Card } from '../components/ui/Card';
@@ -7,10 +7,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Settings, Gamepad2, Gift } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
-    const { userName, friendName, currentTheme, setTheme, relationship } = useApp();
+    const { userName, friendName, currentTheme, setTheme, relationship, setUserName, setFriendName, setRelationship } = useApp();
     const theme = themes[currentTheme];
     const navigate = useNavigate();
+    const location = useLocation();
     const [showThemeModal, setShowThemeModal] = useState(false);
+
+    // 从 URL 中恢复信息
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const u = params.get('u');
+        const f = params.get('f');
+        const r = params.get('r');
+
+        if (u) setUserName(u);
+        if (f) setFriendName(f);
+        if (r) setRelationship(r as any);
+    }, [location.search, setUserName, setFriendName, setRelationship]);
 
     const getRelationshipBadge = () => {
         switch (relationship) {

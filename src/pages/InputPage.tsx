@@ -23,7 +23,13 @@ export const InputPage: React.FC = () => {
         setUserName(form.name);
         setFriendName(form.friend);
         setRelationship(form.rel as any);
-        navigate('/home');
+        // 将信息编码到 URL 中，方便分享
+        const params = new URLSearchParams({
+            u: form.name,
+            f: form.friend,
+            r: form.rel
+        });
+        navigate(`/home?${params.toString()}`);
     };
 
     return (
