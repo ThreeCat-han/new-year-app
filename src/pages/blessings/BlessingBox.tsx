@@ -196,14 +196,7 @@ export const BlessingBox: React.FC = () => {
                                     {showCopyHint ? '已复制链接' : '发送给朋友'}
                                 </Button>
                             </div>
-
-                            {isShared && (
-                                <div className="mt-4 text-center">
-                                    <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-                                        我也要制作祝福卡 →
-                                    </Button>
-                                </div>
-                            )}
+                            
                         </motion.div>
                     )}
                 </AnimatePresence>
