@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../../context/AppContext';
 import { themes } from '../../theme/themeConfig';
@@ -18,6 +17,9 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
     const { currentTheme } = useApp();
     const theme = themes[currentTheme];
+
+    // Filter out standard props that conflict with framer-motion's augmented props
+    const { onDrag, onDragStart, onDragEnd, onPointerDown, ...safeProps } = props as any;
 
     const baseStyles = 'rounded-full font-bold shadow-lg transition-transform active:scale-95 flex items-center justify-center';
 
@@ -54,7 +56,7 @@ export const Button: React.FC<ButtonProps> = ({
             whileTap={{ scale: 0.95 }}
             className={`${baseStyles} ${sizeStyles[size]} ${className}`}
             style={variants[variant]}
-            {...props}
+            {...safeProps}
         >
             {children}
         </motion.button>

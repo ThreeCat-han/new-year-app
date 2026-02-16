@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { themes } from '../../theme/themeConfig';
@@ -167,7 +167,7 @@ export const PuzzleGame: React.FC = () => {
                     // Dynamic Calculations
                     const gap = 2; // px
                     const totalGap = (gridSize - 1) * gap;
-                    const containerSize = 320 - 16; // minus padding (p-2 = 8px * 2) roughly 304px
+                    // const containerSize = 320 - 16; // minus padding (p-2 = 8px * 2) roughly 304px
                     // Wait, manual fix: 320px container. Padding 8px. content box ~304px.
                     // Let's rely on percentage or fixed calc
                     const cellSize = (304 - totalGap) / gridSize;
